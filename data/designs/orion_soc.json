@@ -1,0 +1,194 @@
+{
+  "name": "orion_soc",
+  "version": "0.3.1",
+  "description": "Fictional SoC design for the Arteris SoC Design Explorer MCP interview exercise.",
+  "components": [
+    {
+      "id": "cpu0",
+      "kind": "initiator",
+      "name": "CPU0",
+      "properties": {
+        "clock_domain": "cd_cpu",
+        "data_width": 128,
+        "qos": "high",
+        "protocol": "AXI4"
+      }
+    },
+    {
+      "id": "gpu0",
+      "kind": "initiator",
+      "name": "GPU0",
+      "properties": {
+        "clock_domain": "cd_gpu",
+        "data_width": 256,
+        "qos": "high",
+        "protocol": "AXI4"
+      }
+    },
+    {
+      "id": "dma0",
+      "kind": "initiator",
+      "name": "DMA0",
+      "properties": {
+        "clock_domain": "cd_sys",
+        "data_width": 64,
+        "qos": "medium",
+        "protocol": "AXI4"
+      }
+    },
+    {
+      "id": "r0",
+      "kind": "router",
+      "name": "CentralRouter",
+      "properties": {
+        "clock_domain": "cd_noc",
+        "ports": 6,
+        "routing": "xy"
+      }
+    },
+    {
+      "id": "r1",
+      "kind": "router",
+      "name": "EdgeRouter",
+      "properties": {
+        "clock_domain": "cd_noc",
+        "ports": 4,
+        "routing": "xy"
+      }
+    },
+    {
+      "id": "sram0",
+      "kind": "target",
+      "name": "SRAM_L2",
+      "properties": {
+        "clock_domain": "cd_sys",
+        "size_kb": 2048,
+        "protocol": "AXI4"
+      }
+    },
+    {
+      "id": "ddr0",
+      "kind": "target",
+      "name": "DDRController",
+      "properties": {
+        "clock_domain": "cd_ddr",
+        "channels": 2,
+        "protocol": "AXI4"
+      }
+    },
+    {
+      "id": "periph0",
+      "kind": "target",
+      "name": "PeriphBridge",
+      "properties": {
+        "clock_domain": "cd_sys",
+        "protocol": "APB"
+      }
+    },
+    {
+      "id": "dbg_probe",
+      "kind": "observer",
+      "name": "DebugProbe",
+      "properties": {
+        "protocol": "trace"
+      }
+    }
+  ],
+  "links": [
+    {
+      "id": "L1",
+      "src": "cpu0",
+      "dst": "r0",
+      "properties": {
+        "bandwidth_mbps": 12800,
+        "latency_ns": 2,
+        "protocol": "AXI4"
+      }
+    },
+    {
+      "id": "L2",
+      "src": "gpu0",
+      "dst": "r0",
+      "properties": {
+        "bandwidth_mbps": 25600,
+        "latency_ns": 2,
+        "protocol": "AXI4"
+      }
+    },
+    {
+      "id": "L3",
+      "src": "dma0",
+      "dst": "r0",
+      "properties": {
+        "bandwidth_mbps": 128,
+        "latency_ns": 4,
+        "protocol": "AXI4"
+      }
+    },
+    {
+      "id": "L4",
+      "src": "r0",
+      "dst": "r1",
+      "properties": {
+        "bandwidth_mbps": 19200,
+        "latency_ns": 3,
+        "protocol": "NoC"
+      }
+    },
+    {
+      "id": "L5",
+      "src": "r0",
+      "dst": "ddr0",
+      "properties": {
+        "bandwidth_mbps": 16000,
+        "latency_ns": 20,
+        "protocol": "AXI4"
+      }
+    },
+    {
+      "id": "L6",
+      "src": "r1",
+      "dst": "periph0",
+      "properties": {
+        "bandwidth_mbps": 800,
+        "latency_ns": 8,
+        "protocol": "APB"
+      }
+    },
+    {
+      "id": "L7",
+      "src": "r1",
+      "dst": "sram_l2",
+      "properties": {
+        "bandwidth_mbps": 9600,
+        "latency_ns": 5,
+        "protocol": "AXI4"
+      }
+    },
+    {
+      "id": "L_loop",
+      "src": "r0",
+      "dst": "r0",
+      "properties": {
+        "bandwidth_mbps": 1000,
+        "latency_ns": 1,
+        "protocol": "NoC"
+      }
+    },
+    {
+      "id": "L8",
+      "src": "dbg_probe",
+      "dst": "r0",
+      "properties": {
+        "bandwidth_mbps": 100,
+        "latency_ns": 1,
+        "protocol": "trace"
+      }
+    }
+  ],
+  "notes": [
+    "Orion is a teaching design. Some fields may be incomplete.",
+    "Bandwidth values are stored in properties.bandwidth_mbps.",
+    "Display names are not necessarily equal to ids."
+  ]
+}

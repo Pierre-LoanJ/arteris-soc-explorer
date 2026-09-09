@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arteris-ai-interview-starter"
+version = "0.1.0"
+description = "SoC Design Explorer MCP starter — Arteris AI Software Engineer interview"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+# Candidates may add: mcp, pydantic, httpx, openai, anthropic, etc.
+mcp = ["mcp>=1.0", "pydantic>=2.0"]
+
+[tool.setuptools.packages.find]
+include = ["mini_eda*", "soc_explorer*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
