@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "soc-explorer": {
+      "command": ".venv/bin/soc-explorer-mcp",
+      "args": ["--design", "data/designs/orion_soc.json"],
+      "env": {}
+    }
+  }
+}

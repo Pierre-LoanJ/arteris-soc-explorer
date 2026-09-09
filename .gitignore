@@ -9,7 +9,11 @@ __pycache__/
 dist/
 build/
 .DS_Store
+.idea/
+# Backups written by the mutation tools before overwriting a design.
 data/designs/*.bak.json
-artifacts/scenario_results.json
-artifacts/tools_manifest.json
-artifacts/pytest_stdout.txt
+# NB: the starter shipped with artifacts/scenario_results.json,
+# artifacts/tools_manifest.json and artifacts/pytest_stdout.txt ignored here,
+# while the README requires them in the submission. They are tracked on
+# purpose — see artifacts/NOTES.md.
+*.iml

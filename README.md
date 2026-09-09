@@ -1,3 +1,10 @@
+> **Candidate submission** — the deliverable's operating manual is in
+> [SUBMISSION.md](SUBMISSION.md) (install, run, the two proofs, assumptions and
+> limits). Design decisions: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) ·
+> Tool catalog: [docs/TOOLS.md](docs/TOOLS.md) · Observations from running
+> Orion: [artifacts/NOTES.md](artifacts/NOTES.md). The text below is the
+> original exercise statement, unmodified.
+
 # Arteris — AI Software Engineer technical exercise
 
 **Subject:** SoC Design Explorer MCP  

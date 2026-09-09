@@ -8,12 +8,18 @@ version = "0.1.0"
 description = "SoC Design Explorer MCP starter — Arteris AI Software Engineer interview"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+# pydantic backs the tool schemas, so it is required by the scenario runner
+# too, not only by the MCP server. mcp is pinned to 2.x: the 2.0 rewrite
+# renamed FastMCP and replaced the server decorators with callbacks, so 1.x
+# would not import soc_explorer/mcp_server.py.
+dependencies = ["pydantic>=2.7", "mcp>=2.0,<3"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
-# Candidates may add: mcp, pydantic, httpx, openai, anthropic, etc.
-mcp = ["mcp>=1.0", "pydantic>=2.0"]
+mcp = []  # kept for the starter's documented `pip install -e ".[mcp]"`
+
+[project.scripts]
+soc-explorer-mcp = "soc_explorer.mcp_server:main"
 
 [tool.setuptools.packages.find]
 include = ["mini_eda*", "soc_explorer*"]

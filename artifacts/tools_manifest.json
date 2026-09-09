@@ -1,0 +1,500 @@
+{
+  "design_sha256": "e9e29d29183af7bc8e00c9b76ecea314d428c1e16adc9f06170e59e59cf1bd8a",
+  "tools": [
+    {
+      "name": "describe_design",
+      "description": "Overview of the loaded design: counts, kinds, clock domains, property keys, available checks. Call this first.",
+      "mutates": false,
+      "arity": 0,
+      "required": [],
+      "optional": [],
+      "input_schema": {
+        "additionalProperties": false,
+        "description": "No arguments: the entry point an agent calls first.",
+        "properties": {},
+        "title": "DescribeDesignInput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_components",
+      "description": "List components, optionally filtered by kind.",
+      "mutates": false,
+      "arity": 2,
+      "required": [],
+      "optional": [
+        "kind",
+        "limit"
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Filter by component kind, e.g. 'initiator', 'router', 'target', 'observer'. Omit to list every component.",
+            "title": "Kind"
+          },
+          "limit": {
+            "default": 100,
+            "description": "Maximum rows returned.",
+            "maximum": 1000,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "ListComponentsInput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_component",
+      "description": "Get one component by id, with its links and bandwidth balance.",
+      "mutates": false,
+      "arity": 1,
+      "required": [
+        "component_id"
+      ],
+      "optional": [],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "component_id": {
+            "description": "Exact component id (not its display name). Use search to resolve a name into an id.",
+            "minLength": 1,
+            "title": "Component Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "component_id"
+        ],
+        "title": "GetComponentInput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_links",
+      "description": "List links, optionally filtered by src and/or dst component id.",
+      "mutates": false,
+      "arity": 3,
+      "required": [],
+      "optional": [
+        "dst",
+        "limit",
+        "src"
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "src": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Keep only links whose src is this component id.",
+            "title": "Src"
+          },
+          "dst": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Keep only links whose dst is this component id.",
+            "title": "Dst"
+          },
+          "limit": {
+            "default": 100,
+            "description": "Maximum rows returned.",
+            "maximum": 1000,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "ListLinksInput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_link",
+      "description": "Get one link by id, flagging unresolved endpoints and clock crossings.",
+      "mutates": false,
+      "arity": 1,
+      "required": [
+        "link_id"
+      ],
+      "optional": [],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "link_id": {
+            "description": "Exact link id, e.g. 'L1'.",
+            "minLength": 1,
+            "title": "Link Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "link_id"
+        ],
+        "title": "GetLinkInput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "search",
+      "description": "Ranked search over ids, names, kinds, endpoints and properties; each hit reports which field matched and how.",
+      "mutates": false,
+      "arity": 5,
+      "required": [
+        "query"
+      ],
+      "optional": [
+        "case_sensitive",
+        "limit",
+        "search_properties",
+        "types"
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "description": "Text to look for in ids, display names, kinds, link endpoints and property values.",
+            "minLength": 1,
+            "title": "Query",
+            "type": "string"
+          },
+          "types": {
+            "default": "all",
+            "description": "Restrict results to components or links.",
+            "enum": [
+              "all",
+              "component",
+              "link"
+            ],
+            "title": "Types",
+            "type": "string"
+          },
+          "case_sensitive": {
+            "default": false,
+            "description": "Off by default: 'sram' must find the component whose display name is 'SRAM_L2'.",
+            "title": "Case Sensitive",
+            "type": "boolean"
+          },
+          "search_properties": {
+            "default": true,
+            "description": "Also match property keys and values, e.g. 'AXI4' or 'cd_noc'.",
+            "title": "Search Properties",
+            "type": "boolean"
+          },
+          "limit": {
+            "default": 25,
+            "description": "Maximum hits returned.",
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "SearchInput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_neighbors",
+      "description": "Direct peers of a component, following link direction.",
+      "mutates": false,
+      "arity": 2,
+      "required": [
+        "component_id"
+      ],
+      "optional": [
+        "direction"
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "component_id": {
+            "description": "Component whose direct peers you want.",
+            "minLength": 1,
+            "title": "Component Id",
+            "type": "string"
+          },
+          "direction": {
+            "default": "both",
+            "description": "'out' follows links where the component is src, 'in' where it is dst.",
+            "enum": [
+              "out",
+              "in",
+              "both"
+            ],
+            "title": "Direction",
+            "type": "string"
+          }
+        },
+        "required": [
+          "component_id"
+        ],
+        "title": "GetNeighborsInput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "find_path",
+      "description": "Shortest directed path between two components, with latency sum and bandwidth bottleneck.",
+      "mutates": false,
+      "arity": 3,
+      "required": [
+        "dst",
+        "src"
+      ],
+      "optional": [
+        "max_hops"
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "src": {
+            "description": "Start component id.",
+            "minLength": 1,
+            "title": "Src",
+            "type": "string"
+          },
+          "dst": {
+            "description": "Destination component id.",
+            "minLength": 1,
+            "title": "Dst",
+            "type": "string"
+          },
+          "max_hops": {
+            "default": 8,
+            "description": "Give up beyond this many links.",
+            "maximum": 20,
+            "minimum": 1,
+            "title": "Max Hops",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "src",
+          "dst"
+        ],
+        "title": "FindPathInput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "validate_design",
+      "description": "Run consistency checks (topology, clock domains, bandwidth, source duplicates) and return a structured verdict.",
+      "mutates": false,
+      "arity": 2,
+      "required": [],
+      "optional": [
+        "checks",
+        "min_severity"
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "checks": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Subset of check names to run (see describe_design.checks_available). Omit to run them all.",
+            "title": "Checks"
+          },
+          "min_severity": {
+            "default": "info",
+            "description": "Lowest severity to report: 'error' only, 'warning' and above, or 'info' (everything).",
+            "enum": [
+              "error",
+              "warning",
+              "info"
+            ],
+            "title": "Min Severity",
+            "type": "string"
+          }
+        },
+        "title": "ValidateDesignInput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "update_property",
+      "description": "Change one property. Previews by default (persist=false): returns the diff and the validation impact without touching the file.",
+      "mutates": true,
+      "arity": 5,
+      "required": [
+        "element_id",
+        "prop_path",
+        "value"
+      ],
+      "optional": [
+        "force",
+        "persist"
+      ],
+      "input_schema": {
+        "$defs": {
+          "JsonValue": {}
+        },
+        "additionalProperties": false,
+        "properties": {
+          "element_id": {
+            "description": "Id of the component or link to modify.",
+            "minLength": 1,
+            "title": "Element Id",
+            "type": "string"
+          },
+          "prop_path": {
+            "description": "Dotted path inside the element's 'properties' object, e.g. 'qos' or 'bandwidth_mbps'. Structural fields (id, src, dst, kind) are not reachable and cannot be changed.",
+            "minLength": 1,
+            "title": "Prop Path",
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/$defs/JsonValue",
+            "description": "New JSON value to assign."
+          },
+          "persist": {
+            "default": false,
+            "description": "False (default) previews the change: you get the diff and the validation impact, and the design file is left untouched. Set True only when the preview is what you want.",
+            "title": "Persist",
+            "type": "boolean"
+          },
+          "force": {
+            "default": false,
+            "description": "Persist even if the change introduces new error-severity validation issues. Without it such a write is refused.",
+            "title": "Force",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "element_id",
+          "prop_path",
+          "value"
+        ],
+        "title": "UpdatePropertyInput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "set_link_endpoint",
+      "description": "Retarget a link's src or dst to an existing component; the only structural edit exposed, same preview-and-validate policy.",
+      "mutates": true,
+      "arity": 5,
+      "required": [
+        "component_id",
+        "link_id",
+        "role"
+      ],
+      "optional": [
+        "force",
+        "persist"
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "link_id": {
+            "description": "Link to retarget, e.g. 'L7'.",
+            "minLength": 1,
+            "title": "Link Id",
+            "type": "string"
+          },
+          "role": {
+            "description": "Which end of the link to move: 'src' (origin) or 'dst' (destination).",
+            "enum": [
+              "src",
+              "dst"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "component_id": {
+            "description": "Existing component id to point at. A non-existent id is refused, since that is exactly the defect this repairs.",
+            "minLength": 1,
+            "title": "Component Id",
+            "type": "string"
+          },
+          "persist": {
+            "default": false,
+            "description": "False (default) previews the change and leaves the file untouched.",
+            "title": "Persist",
+            "type": "boolean"
+          },
+          "force": {
+            "default": false,
+            "description": "Persist even if the change introduces new error-severity issues.",
+            "title": "Force",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "link_id",
+          "role",
+          "component_id"
+        ],
+        "title": "SetLinkEndpointInput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "export_report",
+      "description": "Short design report as text, markdown or json.",
+      "mutates": false,
+      "arity": 1,
+      "required": [],
+      "optional": [
+        "format"
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "format": {
+            "default": "text",
+            "description": "Rendering of the report.",
+            "enum": [
+              "text",
+              "json",
+              "markdown"
+            ],
+            "title": "Format",
+            "type": "string"
+          }
+        },
+        "title": "ExportReportInput",
+        "type": "object"
+      }
+    }
+  ]
+}
